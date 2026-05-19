@@ -4,4 +4,3 @@
   "azure_blob_storage_container_name": "testcontainername",
   "shared_access_signature": "your_sas_here"
 }
-

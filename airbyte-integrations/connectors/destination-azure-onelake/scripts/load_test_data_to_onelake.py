@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright (c) 2026 Airbyte, Inc., all rights reserved.
+
 import json
 from datetime import datetime
 from pathlib import Path
@@ -61,4 +63,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

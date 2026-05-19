@@ -14,18 +14,18 @@ import io.airbyte.cdk.load.command.object_storage.JsonFormatSpecification
 import io.airbyte.cdk.load.command.object_storage.ObjectStorageFormatSpecification
 import io.airbyte.cdk.load.command.object_storage.ObjectStorageFormatSpecificationProvider
 import io.airbyte.cdk.load.spec.DestinationSpecificationExtension
-import io.micronaut.context.annotation.Primary
 import io.airbyte.protocol.models.v0.DestinationSyncMode
+import io.micronaut.context.annotation.Primary
 import jakarta.inject.Singleton
 
 /**
  * Microsoft OneLake Destination Specification.
  *
  * OneLake exposes an ABFS-compatible endpoint:
- *   abfss://<workspace>@onelake.dfs.fabric.microsoft.com/<item>.<itemtype>/<path>/
+ * abfss://<workspace>@onelake.dfs.fabric.microsoft.com/<item>.<itemtype>/<path>/
  *
- * Authentication: either Azure Service Principal (Tenant ID + Client ID + Client Secret)
- * or Managed Identity (use_managed_identity=true). Account-key auth is NOT supported by OneLake.
+ * Authentication: either Azure Service Principal (Tenant ID + Client ID + Client Secret) or Managed
+ * Identity (use_managed_identity=true). Account-key auth is NOT supported by OneLake.
  */
 @Singleton
 @Primary
@@ -36,15 +36,14 @@ class MicrosoftOneLakeSpecification :
     AzureBlobStorageClientSpecification,
     ObjectStorageFormatSpecificationProvider {
 
-    // Same structure as Azure Blob Storage spec so the Airbyte UI form works (no hidden/auth overrides).
+    // Same structure as Azure Blob Storage spec so the Airbyte UI form works (no hidden/auth
+    // overrides).
     @get:JsonSchemaTitle("Azure Storage Endpoint Domain Name")
     @get:JsonPropertyDescription(
         "OneLake uses a fixed endpoint. Leave default for Microsoft Fabric OneLake."
     )
     @get:JsonProperty("azure_blob_storage_endpoint_domain_name")
-    @get:JsonSchemaInject(
-        json = """{"group":"onelake","order":0}"""
-    )
+    @get:JsonSchemaInject(json = """{"group":"onelake","order":0}""")
     val azureBlobStorageEndpointDomainName: String? = "onelake.dfs.fabric.microsoft.com"
 
     @get:JsonSchemaTitle("Fabric Workspace Name or GUID")
@@ -62,9 +61,7 @@ class MicrosoftOneLakeSpecification :
         "The Lakehouse (or Fabric item) that will receive the data. E.g. 'MyLakehouse.Lakehouse' or 'lakehouse_raw'."
     )
     @get:JsonProperty("azure_blob_storage_container_name")
-    @get:JsonSchemaInject(
-        json = """{"group":"onelake","examples":["mycontainer"],"order":2}"""
-    )
+    @get:JsonSchemaInject(json = """{"group":"onelake","examples":["mycontainer"],"order":2}""")
     override val azureBlobStorageContainerName: String = ""
 
     // Not supported for OneLake; kept for schema compatibility. Placed at end of form via order.
@@ -90,7 +87,8 @@ class MicrosoftOneLakeSpecification :
     // Do NOT override these as plain nullable properties without schema annotations.
     // Airbyte relies on `airbyte_secret` to know when to preserve existing values on edit.
     // If we drop the secret annotation, the UI will send masked placeholders (e.g. "********")
-    // and the platform will persist that literal value, breaking auth until the user re-enters creds.
+    // and the platform will persist that literal value, breaking auth until the user re-enters
+    // creds.
 
     @get:JsonSchemaTitle("Azure Tenant ID")
     @get:JsonPropertyDescription(
@@ -98,7 +96,8 @@ class MicrosoftOneLakeSpecification :
     )
     @get:JsonProperty("azure_tenant_id")
     @get:JsonSchemaInject(
-        json = """{"group":"onelake","examples":["12345678-1234-1234-1234-123456789012"],"airbyte_secret":false,"order":6}"""
+        json =
+            """{"group":"onelake","examples":["12345678-1234-1234-1234-123456789012"],"airbyte_secret":false,"order":6}"""
     )
     override val azureTenantId: String? = ""
 
@@ -108,7 +107,8 @@ class MicrosoftOneLakeSpecification :
     )
     @get:JsonProperty("azure_client_id")
     @get:JsonSchemaInject(
-        json = """{"group":"onelake","examples":["87654321-4321-4321-4321-210987654321"],"airbyte_secret":false,"order":7}"""
+        json =
+            """{"group":"onelake","examples":["87654321-4321-4321-4321-210987654321"],"airbyte_secret":false,"order":7}"""
     )
     override val azureClientId: String? = ""
 
@@ -143,7 +143,8 @@ class MicrosoftOneLakeSpecification :
     )
     @get:JsonProperty("destination_path_format")
     @JsonSchemaInject(
-        json = "{\"group\":\"onelake\",\"examples\":[\"${'$'}{NAMESPACE}/${'$'}{STREAM_NAME}/\"],\"default\":\"\",\"order\":10}"
+        json =
+            "{\"group\":\"onelake\",\"examples\":[\"${'$'}{NAMESPACE}/${'$'}{STREAM_NAME}/\"],\"default\":\"\",\"order\":10}"
     )
     val pathFormat: String? = ""
 
@@ -153,7 +154,8 @@ class MicrosoftOneLakeSpecification :
     )
     @get:JsonProperty("file_name_pattern")
     @JsonSchemaInject(
-        json = """{"group":"onelake","examples":["{date}_{timestamp}_{part_number}{format_extension}"],"default":"","order":11}"""
+        json =
+            """{"group":"onelake","examples":["{date}_{timestamp}_{part_number}{format_extension}"],"default":"","order":11}"""
     )
     val fileNamePattern: String? = ""
 
@@ -164,7 +166,8 @@ class MicrosoftOneLakeSpecification :
     )
     @get:JsonProperty("azure_client_secret")
     @get:JsonSchemaInject(
-        json = """{"group":"onelake","examples":["your-client-secret"],"airbyte_secret":true,"order":8}"""
+        json =
+            """{"group":"onelake","examples":["your-client-secret"],"airbyte_secret":true,"order":8}"""
     )
     override val azureClientSecret: String? = ""
 
@@ -196,4 +199,3 @@ class MicrosoftOneLakeSpecificationExtension : DestinationSpecificationExtension
             DestinationSpecificationExtension.Group("onelake", "Microsoft OneLake"),
         )
 }
-

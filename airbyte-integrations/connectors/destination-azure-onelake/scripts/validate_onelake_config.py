@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright (c) 2026 Airbyte, Inc., all rights reserved.
+
 """
 Validate Microsoft OneLake destination config.json without using Airbyte.
 
@@ -24,10 +26,9 @@ import re
 import sys
 from pathlib import Path
 
+
 # UUID v4-ish pattern (hex in 8-4-4-4-12)
-UUID_RE = re.compile(
-    r"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-)
+UUID_RE = re.compile(r"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$")
 
 REQUIRED_KEYS = [
     "azure_blob_storage_account_name",
@@ -64,9 +65,7 @@ def validate_format(obj: object) -> list[str]:
     if not ft:
         errs.append("format: missing 'format_type'")
     elif ft.upper() not in VALID_FORMAT_TYPES:
-        errs.append(
-            f"format: format_type must be one of {sorted(VALID_FORMAT_TYPES)} (got: {ft!r})"
-        )
+        errs.append(f"format: format_type must be one of {sorted(VALID_FORMAT_TYPES)} (got: {ft!r})")
     return errs
 
 
@@ -115,15 +114,14 @@ def validate_config(config: dict) -> list[str]:
 def test_connectivity(config: dict) -> list[str]:
     """Optional: upload a tiny blob to OneLake and delete it. Returns list of error messages."""
     import warnings
+
     # Suppress urllib3 NotOpenSSLWarning on macOS (LibreSSL vs OpenSSL) before loading azure
     warnings.filterwarnings("ignore", module="urllib3")
     try:
         from azure.identity import ClientSecretCredential
         from azure.storage.blob import BlobServiceClient
     except ImportError:
-        return [
-            "Connectivity test requires: pip install azure-storage-blob azure-identity"
-        ]
+        return ["Connectivity test requires: pip install azure-storage-blob azure-identity"]
     workspace = (config.get("azure_blob_storage_account_name") or "").strip()
     lakehouse_raw = (config.get("azure_blob_storage_container_name") or "").strip()
     tenant_id = (config.get("azure_tenant_id") or "").strip()
@@ -163,9 +161,7 @@ def test_connectivity(config: dict) -> list[str]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(
-        description="Validate OneLake destination config.json (no Airbyte)."
-    )
+    parser = argparse.ArgumentParser(description="Validate OneLake destination config.json (no Airbyte).")
     parser.add_argument(
         "config_path",
         nargs="?",

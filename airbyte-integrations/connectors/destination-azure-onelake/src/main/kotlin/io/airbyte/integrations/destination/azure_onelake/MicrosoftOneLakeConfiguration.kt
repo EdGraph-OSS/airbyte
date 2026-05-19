@@ -32,20 +32,19 @@ private const val FILE_DEFAULT_MAX_MEMORY_RESERVED_FOR_PARTS = 0.2
  * Runtime configuration for the Microsoft OneLake destination.
  *
  * OneLake ABFS URI structure:
- *   abfss://<workspaceName>@onelake.dfs.fabric.microsoft.com/<item>.<itemtype>/Files/<subPath>/<pathPattern>
+ * abfss://<workspaceName>@onelake.dfs.fabric.microsoft.com/<item>.<itemtype>/Files/<subPath>/<pathPattern>
  *
  * This is achieved by:
- *  - endpoint  = "onelake.dfs.fabric.microsoft.com"   (fixed)
- *  - account   = workspaceName / GUID
- *  - container = "<ItemName>.<ItemType>"  e.g. "MyLakehouse.Lakehouse"
- *  - prefix    = "Files/<oneLakeFilesSubPath>/"        (prepended to every object key)
- *  - pathPattern / fileNamePattern apply on top of prefix as usual
+ * - endpoint = "onelake.dfs.fabric.microsoft.com" (fixed)
+ * - account = workspaceName / GUID
+ * - container = "<ItemName>.<ItemType>" e.g. "MyLakehouse.Lakehouse"
+ * - prefix = "Files/<oneLakeFilesSubPath>/" (prepended to every object key)
+ * - pathPattern / fileNamePattern apply on top of prefix as usual
  */
 class MicrosoftOneLakeConfiguration<T : OutputStream>(
     override val azureBlobStorageClientConfiguration: AzureBlobStorageClientConfiguration,
     override val objectStorageFormatConfiguration: ObjectStorageFormatConfiguration,
     override val objectStorageCompressionConfiguration: ObjectStorageCompressionConfiguration<T>,
-
     private val pathFormat: String? = null,
     private val fileNamePattern: String? = null,
 
@@ -54,11 +53,9 @@ class MicrosoftOneLakeConfiguration<T : OutputStream>(
 
     /** OneLake item path segment e.g. "MyLakehouse.Lakehouse" (used in blob path prefix). */
     private val oneLakeItemPath: String = "Lakehouse.Lakehouse",
-
     override val objectStorageUploadConfiguration: ObjectStorageUploadConfiguration =
         ObjectStorageUploadConfiguration(),
     override val numProcessRecordsWorkers: Int = 1,
-
     val numPartWorkers: Int = 2,
     val numUploadWorkers: Int = 5,
     val maxMemoryRatioReservedForParts: Double = DEFAULT_MAX_MEMORY_RESERVED_FOR_PARTS,
@@ -79,14 +76,15 @@ class MicrosoftOneLakeConfiguration<T : OutputStream>(
     }
 
     /**
-     * Normalise path-pattern variables to the \${VAR} form expected by the CDK,
-     * and ensure a trailing '/'.
+     * Normalise path-pattern variables to the \${VAR} form expected by the CDK, and ensure a
+     * trailing '/'.
      */
     private fun resolvePathPattern(raw: String?): String {
         val trimmed = raw?.trim()?.takeIf { it.isNotBlank() } ?: return DEFAULT_PATH_PATTERN
-        val normalised = trimmed.replace("""\$?\{(\w+)}""".toRegex()) { match ->
-            "\${${match.groupValues[1].uppercase()}}"
-        }
+        val normalised =
+            trimmed.replace("""\$?\{(\w+)}""".toRegex()) { match ->
+                "\${${match.groupValues[1].uppercase()}}"
+            }
         return if (normalised.endsWith('/')) normalised else "$normalised/"
     }
 
@@ -104,21 +102,22 @@ class MicrosoftOneLakeConfiguration<T : OutputStream>(
         return if (item.isBlank()) filesPart else "$item/$filesPart"
     }
 
-    override val objectStoragePathConfiguration = ObjectStoragePathConfiguration(
-        prefix = buildPrefix(),
-        pathPattern = resolvePathPattern(pathFormat),
-        fileNamePattern = resolveFileNamePattern(fileNamePattern),
-        resolveNamesMethod = { Transformations.toAzureBlobSafePath(it) },
-    )
+    override val objectStoragePathConfiguration =
+        ObjectStoragePathConfiguration(
+            prefix = buildPrefix(),
+            pathPattern = resolvePathPattern(pathFormat),
+            fileNamePattern = resolveFileNamePattern(fileNamePattern),
+            resolveNamesMethod = { Transformations.toAzureBlobSafePath(it) },
+        )
 
     override val generationIdMetadataKey = GENERATION_ID_METADATA_KEY_OVERRIDE
 }
 
 @Singleton
 @Primary
-class MicrosoftOneLakeConfigurationFactory(
-    private val destinationCatalog: DestinationCatalog
-) : DestinationConfigurationFactory<MicrosoftOneLakeSpecification, MicrosoftOneLakeConfiguration<*>> {
+class MicrosoftOneLakeConfigurationFactory(private val destinationCatalog: DestinationCatalog) :
+    DestinationConfigurationFactory<
+        MicrosoftOneLakeSpecification, MicrosoftOneLakeConfiguration<*>> {
 
     override fun makeWithoutExceptionHandling(
         pojo: MicrosoftOneLakeSpecification
@@ -127,16 +126,17 @@ class MicrosoftOneLakeConfigurationFactory(
         val rawLakehouse = pojo.azureBlobStorageContainerName.trim()
         // OneLake path segment must be {itemname}.{itemtype} e.g. mylakehouse.Lakehouse
         val oneLakeItemPath =
-            if (rawLakehouse.contains(".")) rawLakehouse
-            else "$rawLakehouse.Lakehouse"
+            if (rawLakehouse.contains(".")) rawLakehouse else "$rawLakehouse.Lakehouse"
 
         // OneLake Blob API: container = workspace, blob path = item.itemtype/Files/subPath/...
-        val clientConfig = pojo.toAzureBlobStorageClientConfiguration().apply {
-            endpointUrl = "https://onelake.blob.fabric.microsoft.com"
-            spillSize = pojo.azureBlobStorageSpillSize
-        }.copy(
-            containerName = pojo.azureBlobStorageAccountName
-        )
+        val clientConfig =
+            pojo
+                .toAzureBlobStorageClientConfiguration()
+                .apply {
+                    endpointUrl = "https://onelake.blob.fabric.microsoft.com"
+                    spillSize = pojo.azureBlobStorageSpillSize
+                }
+                .copy(containerName = pojo.azureBlobStorageAccountName)
 
         // Guard: require Service Principal only when not using Managed Identity
         if (!pojo.useManagedIdentity) {
@@ -152,11 +152,10 @@ class MicrosoftOneLakeConfigurationFactory(
         }
 
         val resolvedOneLakeFilesSubPath =
-            pojo.oneLakeFilesSubPath
-                ?.takeIf { it.isNotBlank() }
-                // Keep the default OneLake layout under Files/data/, even when users provide
-                // a custom destination_path_format. The path format is appended after this segment.
-                ?: "data"
+            pojo.oneLakeFilesSubPath?.takeIf { it.isNotBlank() }
+            // Keep the default OneLake layout under Files/data/, even when users provide
+            // a custom destination_path_format. The path format is appended after this segment.
+            ?: "data"
 
         return MicrosoftOneLakeConfiguration(
             azureBlobStorageClientConfiguration = clientConfig,
@@ -170,8 +169,7 @@ class MicrosoftOneLakeConfigurationFactory(
             maxMemoryRatioReservedForParts =
                 if (destinationCatalog.streams.any { it.isFileBased })
                     FILE_DEFAULT_MAX_MEMORY_RESERVED_FOR_PARTS
-                else
-                    DEFAULT_MAX_MEMORY_RESERVED_FOR_PARTS
+                else DEFAULT_MAX_MEMORY_RESERVED_FOR_PARTS
         )
     }
 }

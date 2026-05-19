@@ -55,9 +55,9 @@ class AzureBlobStorageSpecification :
     val azureBlobStorageSpillSize: Int? = 500
 
     /**
-     * Configurable path format using variable placeholders.
-     * Supported variables: ${NAMESPACE}, ${STREAM_NAME}, ${YEAR}, ${MONTH}, ${DAY},
-     *   ${HOUR}, ${MINUTE}, ${SECOND}, ${MILLISECOND}, ${EPOCH}, ${UUID}
+     * Configurable path format using variable placeholders. Supported variables: ${NAMESPACE},
+     * ${STREAM_NAME}, ${YEAR}, ${MONTH}, ${DAY}, ${HOUR}, ${MINUTE}, ${SECOND}, ${MILLISECOND},
+     * ${EPOCH}, ${UUID}
      */
     @get:JsonSchemaTitle("Output Path Format")
     @get:JsonPropertyDescription(
@@ -69,14 +69,14 @@ class AzureBlobStorageSpecification :
     )
     @get:JsonProperty("destination_path_format")
     @JsonSchemaInject(
-        json = "{\"examples\":[\"${'$'}{NAMESPACE}/${'$'}{STREAM_NAME}/\",\"${'$'}{NAMESPACE}/${'$'}{STREAM_NAME}/${'$'}{YEAR}/${'$'}{MONTH}/${'$'}{DAY}/\",\"${'$'}{STREAM_NAME}/${'$'}{YEAR}_${'$'}{MONTH}_${'$'}{DAY}/\"]}"
+        json =
+            "{\"examples\":[\"${'$'}{NAMESPACE}/${'$'}{STREAM_NAME}/\",\"${'$'}{NAMESPACE}/${'$'}{STREAM_NAME}/${'$'}{YEAR}/${'$'}{MONTH}/${'$'}{DAY}/\",\"${'$'}{STREAM_NAME}/${'$'}{YEAR}_${'$'}{MONTH}_${'$'}{DAY}/\"]}"
     )
     val pathFormat: String? = null
 
     /**
-     * Configurable file name pattern using variable placeholders.
-     * Supported variables: {date}, {date:yyyy_MM}, {timestamp}, {part_number},
-     *   {sync_id}, {format_extension}
+     * Configurable file name pattern using variable placeholders. Supported variables: {date},
+     * {date:yyyy_MM}, {timestamp}, {part_number}, {sync_id}, {format_extension}
      */
     @get:JsonSchemaTitle("File Name Pattern")
     @get:JsonPropertyDescription(
@@ -87,7 +87,8 @@ class AzureBlobStorageSpecification :
     )
     @get:JsonProperty("file_name_pattern")
     @JsonSchemaInject(
-        json = """{"examples":["{date}_{timestamp}_{part_number}{format_extension}","{sync_id}_{date}_{part_number}{format_extension}"]}"""
+        json =
+            """{"examples":["{date}_{timestamp}_{part_number}{format_extension}","{sync_id}_{date}_{part_number}{format_extension}"]}"""
     )
     val fileNamePattern: String? = null
 

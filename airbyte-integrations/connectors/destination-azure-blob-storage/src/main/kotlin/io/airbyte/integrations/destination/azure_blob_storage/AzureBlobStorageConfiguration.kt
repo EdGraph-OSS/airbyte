@@ -66,9 +66,9 @@ class AzureBlobStorageConfiguration<T : OutputStream>(
 
     /**
      * Normalise the user-supplied path format:
-     *  - Variables may come as {VAR}, ${VAR}, or ${var}; always convert to ${VAR}.
-     *  - Ensure a trailing '/'.
-     *  - Fall back to the default pattern when blank.
+     * - Variables may come as {VAR}, ${VAR}, or ${var}; always convert to ${VAR}.
+     * - Ensure a trailing '/'.
+     * - Fall back to the default pattern when blank.
      */
     private fun resolvePathPattern(raw: String?): String {
         val trimmed = raw?.trim()?.takeIf { it.isNotBlank() } ?: return DEFAULT_PATH_PATTERN
@@ -81,10 +81,7 @@ class AzureBlobStorageConfiguration<T : OutputStream>(
         return if (normalised.endsWith('/')) normalised else "$normalised/"
     }
 
-    /**
-     * Normalise the user-supplied filename pattern.
-     * Falls back to the default when blank.
-     */
+    /** Normalise the user-supplied filename pattern. Falls back to the default when blank. */
     private fun resolveFileNamePattern(raw: String?): String {
         return raw?.trim()?.takeIf { it.isNotBlank() } ?: DEFAULT_FILE_NAME_PATTERN
     }

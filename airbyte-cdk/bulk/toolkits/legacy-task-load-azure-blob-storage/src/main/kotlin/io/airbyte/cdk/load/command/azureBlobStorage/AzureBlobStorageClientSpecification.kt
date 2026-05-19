@@ -91,14 +91,16 @@ interface AzureBlobStorageClientSpecification {
     )
     @get:JsonProperty("use_managed_identity")
     @get:JsonSchemaInject(json = """{"default": false}""")
-    val useManagedIdentity: Boolean get() = false
+    val useManagedIdentity: Boolean
+        get() = false
 
     @get:JsonSchemaTitle("Managed Identity Client ID (optional)")
     @get:JsonPropertyDescription(
         "For user-assigned Managed Identity, set this to the identity's client ID. Leave empty for system-assigned."
     )
     @get:JsonProperty("managed_identity_client_id")
-    val managedIdentityClientId: String? get() = null
+    val managedIdentityClientId: String?
+        get() = null
 
     fun toAzureBlobStorageClientConfiguration(): AzureBlobStorageClientConfiguration {
         return AzureBlobStorageClientConfiguration(

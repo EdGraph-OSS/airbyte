@@ -1,4 +1,8 @@
 /*
+ * Copyright (c) 2026 Airbyte, Inc., all rights reserved.
+ */
+
+/*
  * Binds the AzureBlobStorageClientConfigurationProvider interface to the
  * MicrosoftOneLakeConfiguration so that the shared AzureBlobStorageClientFactory
  * always uses the OneLake configuration in this connector.
@@ -21,4 +25,3 @@ class MicrosoftOneLakeAzureClientConfigProvider(
     override val azureBlobStorageClientConfiguration: AzureBlobStorageClientConfiguration
         get() = config.azureBlobStorageClientConfiguration
 }
-

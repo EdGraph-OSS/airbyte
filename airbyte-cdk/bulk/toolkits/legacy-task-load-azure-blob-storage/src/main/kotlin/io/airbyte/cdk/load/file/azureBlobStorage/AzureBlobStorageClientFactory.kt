@@ -25,9 +25,7 @@ class AzureBlobStorageClientFactory(
     fun make(): AzureBlobClient {
         val config = azureBlobStorageClientConfigurationProvider.azureBlobStorageClientConfiguration
 
-        val endpoint =
-            config.endpointUrl
-                ?: "https://${config.accountName}.blob.core.windows.net"
+        val endpoint = config.endpointUrl ?: "https://${config.accountName}.blob.core.windows.net"
 
         val clientBuilder = BlobServiceClientBuilder().endpoint(endpoint)
         when {

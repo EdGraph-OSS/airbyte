@@ -15,9 +15,9 @@ import javax.inject.Singleton
 /**
  * Microsoft OneLake destination writer.
  *
- * Delegates stream loading to the CDK's [ObjectStorageStreamLoaderFactory], which handles
- * chunking, compression, and upload orchestration. The OneLake-specific configuration
- * (endpoint, path prefix, auth) is injected via [MicrosoftOneLakeConfiguration].
+ * Delegates stream loading to the CDK's [ObjectStorageStreamLoaderFactory], which handles chunking,
+ * compression, and upload orchestration. The OneLake-specific configuration (endpoint, path prefix,
+ * auth) is injected via [MicrosoftOneLakeConfiguration].
  */
 @Singleton
 @Primary
@@ -28,4 +28,3 @@ class MicrosoftOneLakeWriter(
         return streamLoaderFactory.create(stream)
     }
 }
-

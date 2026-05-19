@@ -14,11 +14,10 @@ import kotlinx.coroutines.runBlocking
 /**
  * Connection checker for the Microsoft OneLake destination.
  *
- * Validates connectivity and write access by uploading a small test blob under
- * Files/<subPath>/ and then cleaning it up. Metadata and listing verification
- * are best-effort only: OneLake's Blob API may not expose properties or listing
- * the same way as standard Azure Blob Storage, so a successful upload is sufficient
- * to pass the check.
+ * Validates connectivity and write access by uploading a small test blob under Files/<subPath>/ and
+ * then cleaning it up. Metadata and listing verification are best-effort only: OneLake's Blob API
+ * may not expose properties or listing the same way as standard Azure Blob Storage, so a successful
+ * upload is sufficient to pass the check.
  */
 @Singleton
 @Primary
@@ -38,7 +37,8 @@ class MicrosoftOneLakeChecker<T : OutputStream> :
             val checkBlob = client.put(checkFilePath, testData)
 
             try {
-                // 1. Verify metadata if supported (OneLake may not expose blob properties immediately)
+                // 1. Verify metadata if supported (OneLake may not expose blob properties
+                // immediately)
                 try {
                     client.getMetadata(checkFilePath)
                 } catch (e: Exception) {
@@ -79,4 +79,3 @@ class MicrosoftOneLakeChecker<T : OutputStream> :
         }
     }
 }
-
